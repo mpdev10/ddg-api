@@ -1,5 +1,7 @@
 package pl.mpakula.ddg.infrastructure
 
+import com.github.kittinunf.fuel.httpGet
+import com.github.kittinunf.result.getOrElse
 import pl.mpakula.ddg.core.DdgClient
 import pl.mpakula.ddg.core.exception.DdgClientException
 import pl.mpakula.ddg.core.model.DdgResponse
@@ -16,7 +18,6 @@ internal class DefaultDdgClient(
     override fun searchInstantAnswer(query: String): Either<DdgResponse> {
         return try {
             doSearch(query)
-                .jsonObject.toString()
                 .let(::deserialize)
                 .let(::toDomain)
                 .let(::Success)
@@ -25,9 +26,13 @@ internal class DefaultDdgClient(
         }
     }
 
-    private fun doSearch(query: String) = khttp.get(
-        apiUrl,
-        params = mapOf("q" to query, "format" to "json", "no_redirect" to "1", "no_html" to htmlInText.value.toString())
-    )
+    private fun doSearch(query: String) = apiUrl.httpGet(
+        listOf(
+            "q" to query,
+            "format" to "json",
+            "no_redirect" to "1",
+            "no_html" to htmlInText.value.toString()
+        )
+    ).responseString().third.getOrElse { throw it }
 
 }
