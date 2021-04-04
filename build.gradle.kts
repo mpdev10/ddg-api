@@ -10,7 +10,7 @@ val striktVersion: String by project
 val fuelVersion: String by project
 
 group = "pl.mpakula"
-version = "0.0.1-SNAPSHOT"
+version = "0.1.0-SNAPSHOT"
 
 repositories {
     mavenCentral()
