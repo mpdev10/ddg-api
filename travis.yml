@@ -1,0 +1,11 @@
+language: java
+
+jdk:
+  - oraclejdk15
+before_install:
+  - chmod +x gradlew
+  - chmod +x gradle/wrapper/gradle-wrapper.jar
+script:
+  - ./gradlew test build
+after_success:
+  - bash <(curl -s https://codecov.io/bash)
