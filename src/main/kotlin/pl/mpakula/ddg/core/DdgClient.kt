@@ -1,8 +1,9 @@
 package pl.mpakula.ddg.core
 
+import arrow.core.Either
+import pl.mpakula.ddg.core.exception.DdgClientException
 import pl.mpakula.ddg.core.model.DdgResponse
-import pl.mpakula.ddg.core.model.Either
 
 interface DdgClient {
-    fun searchInstantAnswer(query: String): Either<DdgResponse>
+    fun searchInstantAnswer(query: String): Either<DdgClientException, DdgResponse>
 }
