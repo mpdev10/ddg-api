@@ -1,5 +1,6 @@
 package pl.mpakula.ddg
 
+import arrow.core.right
 import com.github.tomakehurst.wiremock.junit.WireMockRule
 import com.marcinziolo.kotlin.wiremock.get
 import com.marcinziolo.kotlin.wiremock.like
@@ -35,7 +36,7 @@ internal class DdgClientIntegrationTest {
         //when
         val result = client.searchInstantAnswer("googol")
         //then
-        expectThat(result).isA<Either.Error>()
+        expectThat(result).right().isNotEmpty()
     }
 
     @Test
@@ -45,8 +46,7 @@ internal class DdgClientIntegrationTest {
             body = jsonResponse { }
         }
         //when
-        val result = client.searchInstantAnswer("google") as? Either.Success<DdgResponse>
-        val response = result?.value
+        val response = client.searchInstantAnswer("google").orNull()
         //then
         expect {
             that(response).isNotNull()
@@ -81,8 +81,8 @@ internal class DdgClientIntegrationTest {
             }
         }
         //when
-        val response = client.searchInstantAnswer("fsm") as? Either.Success<DdgResponse>
-        val abstract = response?.value?.abstract
+        val response = client.searchInstantAnswer("fsm").orNull()
+        val abstract = response?.abstract
         //then
         expectThat(abstract).isEqualTo(
             Abstract(text = absText, source = absSource, url = absUrl, image = img, heading = head))
@@ -100,8 +100,8 @@ internal class DdgClientIntegrationTest {
             }
         }
         //when
-        val response = client.searchInstantAnswer("how to get rich") as? Either.Success<DdgResponse>
-        val answer = response?.value?.answer
+        val response = client.searchInstantAnswer("how to get rich").orNull()
+        val answer = response?.answer
         //then
         expectThat(answer).isEqualTo(Answer(text = ansText, type = ansType))
     }
@@ -120,8 +120,8 @@ internal class DdgClientIntegrationTest {
             }
         }
         //when
-        val response = client.searchInstantAnswer("colander") as? Either.Success<DdgResponse>
-        val definition = response?.value?.definition
+        val response = client.searchInstantAnswer("colander").orNull()
+        val definition = response?.definition
         //then
         expectThat(definition).isEqualTo(Definition(text = defText, source = defSource, url = defUrl))
     }
@@ -149,9 +149,9 @@ internal class DdgClientIntegrationTest {
             }
         }
         //when
-        val response = client.searchInstantAnswer("googol") as? Either.Success<DdgResponse>
-        val relatedTopics = response?.value?.relatedTopics
-        val relatedTopicGroups = response?.value?.relatedTopicGroups
+        val response = client.searchInstantAnswer("googol").orNull()
+        val relatedTopics = response?.relatedTopics
+        val relatedTopicGroups = response?.relatedTopicGroups
         //then
         expect {
             that(relatedTopics).isNotNull()
@@ -190,9 +190,9 @@ internal class DdgClientIntegrationTest {
             }
         }
         //when
-        val response = client.searchInstantAnswer("googol") as? Either.Success<DdgResponse>
-        val relatedTopics = response?.value?.relatedTopics
-        val relatedTopicGroups = response?.value?.relatedTopicGroups
+        val response = client.searchInstantAnswer("googol").orNull()
+        val relatedTopics = response?.relatedTopics
+        val relatedTopicGroups = response?.relatedTopicGroups
         //then
         expect {
             that(relatedTopicGroups).isNotNull()
@@ -234,9 +234,9 @@ internal class DdgClientIntegrationTest {
             }
         }
         //when
-        val response = client.searchInstantAnswer("googol") as? Either.Success<DdgResponse>
-        val results = response?.value?.results
-        val resultGroups = response?.value?.resultGroups
+        val response = client.searchInstantAnswer("googol").orNull()
+        val results = response?.results
+        val resultGroups = response?.resultGroups
         //then
         expect {
             that(results).isNotNull()
@@ -275,9 +275,9 @@ internal class DdgClientIntegrationTest {
             }
         }
         //when
-        val response = client.searchInstantAnswer("googol") as? Either.Success<DdgResponse>
-        val results = response?.value?.results
-        val resultGroups = response?.value?.resultGroups
+        val response = client.searchInstantAnswer("googol").orNull()
+        val results = response?.results
+        val resultGroups = response?.resultGroups
         //then
         expect {
             that(resultGroups).isNotNull()
@@ -302,8 +302,8 @@ internal class DdgClientIntegrationTest {
         val responseType = "c"
         apiGetCall returnsJson { body = jsonResponse { type = responseType } }
         //when
-        val response = client.searchInstantAnswer("any") as? Either.Success<DdgResponse>
-        val type = response?.value?.type
+        val response = client.searchInstantAnswer("any").orNull()
+        val type = response?.type
         //then
         expectThat(type).isNotNull().isEqualTo(ResponseType.CATEGORY)
     }
